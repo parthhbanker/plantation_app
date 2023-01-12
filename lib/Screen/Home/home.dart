@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,16 +28,20 @@ class _HomePageState extends State<HomePage> {
             homePageButton(
               color: Colors.green,
               radius: 12,
-              text: "Synced Forms",
+              text: "Unsynced Forms",
               fontsize: 20,
-              onPressed: () {},
+              onPressed: () {
+                Fluttertoast.showToast(msg: "Unsynced Form Pressed");
+              },
             ),
             homePageButton(
               color: Colors.green,
               radius: 12,
-              text: "Unsynced Forms",
+              text: "Sync Forms",
               fontsize: 20,
-              onPressed: () {},
+              onPressed: () {
+                Fluttertoast.showToast(msg: "Sync Form Pressed");
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 30),

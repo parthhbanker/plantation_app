@@ -14,8 +14,6 @@ class _DemandPageState extends State<DemandPage> {
       appBar: AppBar(
         title: const Text('Demand Tree'),
       ),
-
-      
     );
   }
 }

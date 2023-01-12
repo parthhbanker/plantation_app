@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plantation/Screen/Home/home.dart';
 import 'package:plantation/Screen/Login/login.dart';
+import 'package:plantation/utils/dbhelper.dart';
 
 // check if the user is logged in
 bool isLoggedIn() {
@@ -8,19 +9,13 @@ bool isLoggedIn() {
   return true;
 }
 
-class DecisionTree extends StatefulWidget {
+class DecisionTree extends StatelessWidget {
   const DecisionTree({Key? key}) : super(key: key);
 
   @override
-  State<DecisionTree> createState() => _DecisionTreeState();
-}
-
-class _DecisionTreeState extends State<DecisionTree> {
-  @override
   StatefulWidget build(BuildContext context) {
-    
+    DatabaseHelper().opendb();
     if (isLoggedIn()) {
-      
       return const HomePage();
     } else {
       return const LoginPage();
