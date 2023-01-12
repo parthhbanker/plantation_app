@@ -3,7 +3,6 @@ import 'package:plantation/Screen/Demand/demand.dart';
 import 'package:plantation/Screen/Home/home.dart';
 import 'package:plantation/Screen/Login/login.dart';
 import 'package:plantation/decision_tree.dart';
-import 'package:plantation/utils/dbqueries.dart';
 
 void main() => runApp(const MyApp());
 
@@ -13,6 +12,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     // DbQueries.createTables();
     return MaterialApp(
       debugShowCheckedModeBanner: false,

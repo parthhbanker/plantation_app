@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plantation/utils/dbqueries.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,21 +10,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    DbQueries.createTables();
-
     return Scaffold(
         body: Center(
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // add a button
-            homePageButton(
-              color: Colors.green,
-              radius: 12,
-              text: "Add Farmer",
-              fontsize: 20,
-              onPressed: () {},
-            ),
             homePageButton(
               color: Colors.green,
               radius: 12,
@@ -49,7 +38,6 @@ class _HomePageState extends State<HomePage> {
               fontsize: 20,
               onPressed: () {},
             ),
-
             Padding(
               padding: const EdgeInsets.only(top: 30),
               child: homePageButton(

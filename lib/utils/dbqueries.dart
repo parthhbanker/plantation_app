@@ -1,4 +1,5 @@
 import 'package:plantation/utils/dbhelper.dart';
+import 'package:plantation/api/api.dart';
 
 class DbQueries {
   static void createTables() {
@@ -8,11 +9,6 @@ class DbQueries {
       db.execute(DbQueries._createVillageTable());
       db.execute(DbQueries._createFarmerTable());
     });
-
-    // DatabaseHelper().opendb().then((db) {
-    //   db!.execute(DbQueries._createDistrictTable());
-    //   db.execute(DbQueries._createBlockTable());
-    
   }
 
   // function to create district table
