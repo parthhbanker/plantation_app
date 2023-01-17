@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sizer/sizer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,11 +17,18 @@ class _HomePageState extends State<HomePage> {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            Image.asset(
+              'assets/logo.png',
+              height: 25.h,
+            ),
+            SizedBox(
+              height: 10.h,
+            ),
             homePageButton(
               color: Colors.green,
               radius: 12,
               text: "Demand Tree",
-              fontsize: 20,
+              fontsize: 15.sp,
               onPressed: () {
                 Navigator.pushNamed(context, '/demand');
               },
@@ -29,7 +37,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.green,
               radius: 12,
               text: "Unsynced Forms",
-              fontsize: 20,
+              fontsize: 15.sp,
               onPressed: () {
                 Fluttertoast.showToast(msg: "Unsynced Form Pressed");
               },
@@ -38,21 +46,22 @@ class _HomePageState extends State<HomePage> {
               color: Colors.green,
               radius: 12,
               text: "Sync Forms",
-              fontsize: 20,
+              fontsize: 15.sp,
               onPressed: () {
                 Fluttertoast.showToast(msg: "Sync Form Pressed");
               },
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 30),
+              padding: EdgeInsets.only(top: 5.h),
               child: homePageButton(
-                  color: const Color.fromARGB(255, 49, 138, 52),
-                  text: "Logout",
-                  radius: 12,
-                  onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/');
-                  },
-                  fontsize: 20),
+                color: const Color.fromARGB(255, 49, 138, 52),
+                text: "Logout",
+                radius: 12,
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/');
+                },
+                fontsize: 15.sp,
+              ),
             ),
           ],
         ),
@@ -67,18 +76,18 @@ class _HomePageState extends State<HomePage> {
       double fontsize = 16,
       required Function onPressed}) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(6.sp),
       child: ElevatedButton(
         onPressed: () {
           onPressed();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 8.sp),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radius),
           ),
-          fixedSize: const Size(200, 50),
+          fixedSize: Size(55.w, 6.h),
         ),
         child: Text(
           text,
