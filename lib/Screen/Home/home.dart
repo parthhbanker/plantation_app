@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:plantation/utils/components.dart';
 import 'package:sizer/sizer.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,87 +14,48 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 25.h,
+      body: SafeArea(
+        child: Container(
+          margin: EdgeInsets.all(10.sp),
+          height: 100.h,
+          width: 100.w,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 12.sp),
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: 25.h,
+                  ),
+                ),
+                CustomButton(
+                  title: "Fill Form",
+                  tap: () {
+                    Navigator.pushNamed(context, '/demand');
+                  },
+                ),
+                CustomButton(
+                  title: "Unsynced Forms",
+                  tap: () {
+                    Navigator.pushNamed(context, '/unsyncForm');
+                  },
+                ),
+                Divider(
+                  endIndent: 10.sp,
+                  indent: 10.sp,
+                  thickness: 1.sp,
+                ),
+                CommonButton(
+                  text: "Logout",
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/');
+                  },
+                )
+              ],
             ),
-            SizedBox(
-              height: 10.h,
-            ),
-            homePageButton(
-              color: Colors.green,
-              radius: 12,
-              text: "Demand Tree",
-              fontsize: 15.sp,
-              onPressed: () {
-                Navigator.pushNamed(context, '/demand');
-              },
-            ),
-            homePageButton(
-              color: Colors.green,
-              radius: 12,
-              text: "Unsynced Forms",
-              fontsize: 15.sp,
-              onPressed: () {
-                Fluttertoast.showToast(msg: "Unsynced Form Pressed");
-              },
-            ),
-            homePageButton(
-              color: Colors.green,
-              radius: 12,
-              text: "Sync Forms",
-              fontsize: 15.sp,
-              onPressed: () {
-                Fluttertoast.showToast(msg: "Sync Form Pressed");
-              },
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 5.h),
-              child: homePageButton(
-                color: const Color.fromARGB(255, 49, 138, 52),
-                text: "Logout",
-                radius: 12,
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-                fontsize: 15.sp,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
-  }
-
-  homePageButton(
-      {required Color color,
-      required String text,
-      required double radius,
-      double fontsize = 16,
-      required Function onPressed}) {
-    return Padding(
-      padding: EdgeInsets.all(6.sp),
-      child: ElevatedButton(
-        onPressed: () {
-          onPressed();
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 8.sp),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radius),
-          ),
-          fixedSize: Size(55.w, 6.h),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: fontsize,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ),

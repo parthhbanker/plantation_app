@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:plantation/Screen/Demand/tree_form.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:plantation/Screen/Demand/forest_tree.dart';
+import 'package:plantation/utils/components.dart';
 import 'package:plantation/utils/dbqueries.dart';
 import 'package:sizer/sizer.dart';
 
@@ -84,43 +86,34 @@ class _DemandPageState extends State<DemandPage> {
 
   StreamBuilder<Object> nextButton() {
     return StreamBuilder<Object>(
-        stream: farmerController.stream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.hasData) {
-              int val = int.parse(snapshot.data.toString());
-              return Padding(
-                padding: EdgeInsets.all(8.sp),
-                child: ElevatedButton(
-                  onPressed: val.isNegative
-                      ? null
-                      : () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TreeFormPage(
-                                farmerRegId: farmerValue,
-                              ),
-                            ),
-                          );
-                        },
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(70.sp, 35.sp),
-                    elevation: 8,
-                  ),
-                  child: Text(
-                    "Next",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w400,
+      stream: farmerController.stream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
+            int val = int.parse(snapshot.data.toString());
+            return CommonButton(
+              text: "Next",
+              onPressed: () {
+                if (val.isNegative) {
+                  Fluttertoast.showToast(msg: "Select every field");
+                  Null;
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ForestTreePage(
+                        farmerRegId: farmerValue,
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }
+                  );
+                }
+              },
+            );
           }
-          return const Text("");
-        });
+        }
+        return const Text("");
+      },
+    );
   }
 
   StreamBuilder<int> blockListWidget() {
@@ -139,6 +132,7 @@ class _DemandPageState extends State<DemandPage> {
 
                     return CustomDropDown(
                       value: blockValue,
+                      hint: "Select Block",
                       data: data
                           .map(
                             (e) => DropdownMenuItem(
@@ -188,6 +182,7 @@ class _DemandPageState extends State<DemandPage> {
                       villageValue = data[0]['village_id'];
 
                       return CustomDropDown(
+                        hint: "Select Village",
                         value: villageValue,
                         data: data
                             .map(
@@ -244,6 +239,7 @@ class _DemandPageState extends State<DemandPage> {
                       farmerValue = data[0]['reg_id'];
 
                       return CustomDropDown(
+                        hint: "Select Farmer",
                         value: farmerValue,
                         data: data
                             .map(
@@ -263,7 +259,7 @@ class _DemandPageState extends State<DemandPage> {
                 }
                 return Center(
                   child: Text(
-                    (farmerValue.isNegative && !villageValue.isNegative)
+                    (farmerValue.isNegative)
                         ? ""
                         : "No farmer Under this village",
                     style: TextStyle(
@@ -291,6 +287,7 @@ class _DemandPageState extends State<DemandPage> {
             List<dynamic> data = snapshot.data;
             districtValue = data[0]['district_id'];
             return CustomDropDown(
+                hint: "Select District",
                 value: districtValue,
                 data: data
                     .map(
@@ -333,6 +330,7 @@ class _DemandPageState extends State<DemandPage> {
             List<dynamic> data = snapshot.data;
             yearValue = data[0]['reg_year'];
             return CustomDropDown(
+                hint: "Select Year",
                 // value: districtValue,
                 data: data
                     .map(
@@ -360,60 +358,6 @@ class _DemandPageState extends State<DemandPage> {
           ),
         );
       },
-    );
-  }
-}
-
-class CustomDropDown extends StatelessWidget {
-  const CustomDropDown({
-    Key? key,
-    this.value,
-    required this.data,
-    required this.func,
-  }) : super(key: key);
-
-  final int? value;
-  final List<DropdownMenuItem> data;
-  final Function func;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.sp, vertical: 12.sp),
-      child: DropdownButtonFormField(
-        value: value,
-        items: data,
-        decoration: InputDecoration(
-          focusColor: Colors.transparent,
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.black38,
-              style: BorderStyle.solid,
-            ),
-            borderRadius: BorderRadius.circular(15.sp),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.blueAccent,
-            ),
-            borderRadius: BorderRadius.circular(15.sp),
-          ),
-          filled: true,
-          fillColor: Colors.grey[250],
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15.sp),
-            borderSide: BorderSide(
-              color: Colors.red.shade600,
-            ),
-          ),
-        ),
-        borderRadius: BorderRadius.circular(12.sp),
-
-        // isExpanded: true,
-        onChanged: (value) {
-          func(value);
-        },
-      ),
     );
   }
 }

@@ -31,6 +31,10 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
   SignatureController? _signatureController;
   bool permissionGranted = false;
 
+  double totalForestTree = 0;
+  double totalFruitTree = 0;
+  double totalTree = 0;
+
   @override
   void initState() {
     _signatureController = SignatureController(
@@ -38,6 +42,16 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
       exportBackgroundColor: Colors.white,
       exportPenColor: Colors.black,
     );
+
+    widget.forestTree.forEach((key, value) {
+      totalForestTree += value;
+    });
+    widget.fruitTree.forEach((key, value) {
+      totalFruitTree += value;
+    });
+
+    totalTree = totalForestTree + totalFruitTree;
+
     super.initState();
   }
 
@@ -97,6 +111,27 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
             ),
             SizedBox(
               width: 5.w,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text("Total Forest Trees:"),
+                Text(totalForestTree.toString()),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text("Total Fruit Trees:"),
+                Text(totalFruitTree.toString()),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text("Total Trees:"),
+                Text(totalTree.toString()),
+              ],
             ),
             Column(
               children: [

@@ -1,7 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:plantation/Screen/Demand/demand.dart';
+import 'package:plantation/utils/components.dart';
 import 'package:plantation/utils/dbqueries.dart';
 
 class FarmerPage extends StatefulWidget {
@@ -39,6 +38,7 @@ class _FarmerPageState extends State<FarmerPage> {
                 farmerValue = data[0]['reg_id'];
 
                 return CustomDropDown(
+                  hint: "Farmer",
                   value: farmerValue,
                   data: data
                       .map(

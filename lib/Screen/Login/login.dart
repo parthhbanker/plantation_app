@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plantation/Screen/Home/home.dart';
 import 'package:plantation/utils/components.dart';
+import 'package:sizer/sizer.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,63 +13,61 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            color: Color.fromARGB(255, 208, 214, 219),
-          ),
-        ),
-        Center(
+      body: SafeArea(
+        child: Container(
+          margin: EdgeInsets.all(10.sp),
+          height: 100.h,
+          width: 100.w,
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                customFormField(
+            child: Form(
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.always,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 12.sp),
+                    child: Image.asset(
+                      'assets/logo.png',
+                      height: 25.h,
+                    ),
+                  ),
+                  customFormField(
+                    hintText: "Enter username",
                     controller: usernameController,
-                    label: 'username',
-                    hintText: 'Enter your username'),
-                const SizedBox(height: 20),
-                customFormField(
-                  label: 'password',
-                  hintText: 'Enter your password',
-                  controller: passwordController,
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword,
-                  isPassword: true,
-                ),
-                const SizedBox(height: 20),
-                customButton(
-                  text: "Login",
-                  onPressed: () {
-                    login(usernameController.text, passwordController.text,
-                        context);
-                  },
-                )
-              ],
+                    label: "Username",
+                  ),
+                  customFormField(
+                    hintText: "Enter password",
+                    controller: passwordController,
+                    label: "Password",
+                    isPassword: true,
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: true,
+                  ),
+                  Divider(
+                    endIndent: 10.sp,
+                    indent: 10.sp,
+                    thickness: 1.sp,
+                  ),
+                  CommonButton(
+                    text: "Login",
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/');
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ],
-    ));
-  }
-}
-
-// make a function to check if the user is logged in or not
-void login(String username, String password, BuildContext context) {
-  if (username == 'admin' && password == 'admin') {
-    // navigate to home page
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomePage(),
       ),
     );
-  } else {
-    // show error message
   }
 }
