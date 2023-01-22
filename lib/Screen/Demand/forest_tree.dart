@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:plantation/Screen/Demand/farmer_consent.dart';
 import 'package:plantation/Screen/Demand/fruit_tree.dart';
 import 'package:plantation/utils/components.dart';
 import 'package:plantation/utils/dbqueries.dart';
@@ -20,7 +19,7 @@ class _ForestTreePageState extends State<ForestTreePage> {
     return await DbQueries().getDBData(tableName: 'forest_tree');
   }
 
-  Map<String, double> forestTree = {};
+  List<Map<String, String>> forestTree = [{}];
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +41,20 @@ class _ForestTreePageState extends State<ForestTreePage> {
                     if (snapshot.connectionState == ConnectionState.active ||
                         snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.hasData) {
-                        for (var tree in snapshot.data) {
-                          return CustomQuantity(
-                            tree: tree,
-                            list: forestTree,
-                          );
-                        }
+                        List<dynamic> data = snapshot.data;
+                        return SizedBox(
+                          height: 70.h,
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              return CustomQuantity(
+                                tree: data[index],
+                                list: forestTree,
+                              );
+                            },
+                          ),
+                        );
                       } else {
                         return const Text("No data");
                       }

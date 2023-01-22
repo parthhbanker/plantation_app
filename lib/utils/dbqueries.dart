@@ -1,4 +1,5 @@
 import 'package:plantation/models/block_model.dart';
+import 'package:plantation/models/demand_model.dart';
 import 'package:plantation/models/district_model.dart';
 import 'package:plantation/models/farmer_model.dart';
 import 'package:plantation/models/farmer_reg_model.dart';
@@ -122,11 +123,19 @@ class DbQueries {
     });
   }
 
-  // static void addDemandData(DemandModel obj) async {
-  //   DatabaseHelper().opendb().then((db) {
-  //     db!.insert('demand', obj.toJson());
-  //   });
-  // }
+  static addDemandData(DemandModel obj) async {
+    DatabaseHelper().opendb().then((db) {
+      db!.insert('demand', obj.toJson());
+      // db.rawUpdate(
+      //     "update farmer_year_reg set stage=2 where reg_id = ${obj.regId}");
+    });
+  }
+
+  static deleteDemand(int id) async {
+    DatabaseHelper().opendb().then((db) {
+      db!.delete('demand', where: 'demand_id = ?', whereArgs: [id]);
+    });
+  }
 
   //
   Future<List<dynamic>> getDBData({required String tableName}) async {

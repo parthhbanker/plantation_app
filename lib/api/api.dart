@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:plantation/api/const.dart';
 import 'package:plantation/models/block_model.dart';
+import 'package:plantation/models/demand_model.dart';
 import 'package:plantation/models/district_model.dart';
 import 'package:plantation/models/farmer_model.dart';
 import 'package:plantation/models/farmer_reg_model.dart';
@@ -100,6 +102,61 @@ class ApiHandler {
           .toList();
     }
     return jsonDecode(response.body);
+  }
+
+  static Future<void> sendDemandData(DemandModel obj) async {
+    final request = http.MultipartRequest(
+      'post',
+      Uri.parse(addDemandUrl),
+    );
+
+    File farmerImageFile = File(obj.farmerImage);
+    File farmerSignFile = File(obj.farmerSign);
+    File suveryorSignFile = File(obj.surveyorSign);
+
+    int farmerLen = await farmerImageFile.length();
+    int farmerSignLen = await farmerSignFile.length();
+    int surveyorLen = await suveryorSignFile.length();
+
+    var farmerImageStream = http.ByteStream(farmerImageFile.openRead());
+    var farmerSignStream = http.ByteStream(farmerSignFile.openRead());
+    var surveyorSignStream = http.ByteStream(suveryorSignFile.openRead());
+
+    farmerImageStream.cast();
+    farmerSignStream.cast();
+    surveyorSignStream.cast();
+
+    var farmerImageMultipart = http.MultipartFile(
+      'farmer_image',
+      farmerImageStream,
+      farmerLen,
+    );
+    var farmerSignMultipart = http.MultipartFile(
+      'farmer_sign',
+      farmerSignStream,
+      farmerSignLen,
+    );
+    var surveyorSignMultipart = http.MultipartFile(
+      'surveyor_sign',
+      surveyorSignStream,
+      surveyorLen,
+    );
+
+    request.files.add(farmerSignMultipart);
+    request.files.add(farmerImageMultipart);
+    request.files.add(surveyorSignMultipart);
+
+    request.fields['demand_date'] = obj.demandDate;
+    request.fields['reg_id'] = obj.regId.toString();
+    request.fields['forest_tree'] = jsonEncode(obj.forestTree).toString();
+    request.fields['fruit_tree'] = jsonEncode(obj.fruitTree).toString();
+    request.fields['surveyor_id'] = obj.surveyorId.toString();
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print("COmpleted");
+    }
   }
 
   // master function to call each fetch function

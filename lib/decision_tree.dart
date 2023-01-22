@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:plantation/Screen/Home/home.dart';
 import 'package:plantation/Screen/Login/login.dart';
 import 'package:plantation/api/api.dart';
-// import 'package:plantation/api/api.dart';
 import 'package:plantation/utils/dbhelper.dart';
 
 // check if the user is logged in
@@ -17,7 +16,7 @@ class DecisionTree extends StatelessWidget {
   @override
   StatefulWidget build(BuildContext context) {
     DatabaseHelper().opendb();
-    // ApiHandler.fetchApiData();
+    ApiHandler.fetchApiData();
 
     if (isLoggedIn()) {
       return const HomePage();

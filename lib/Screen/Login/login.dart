@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plantation/Screen/Home/home.dart';
 import 'package:plantation/utils/components.dart';
 import 'package:sizer/sizer.dart';
 
@@ -59,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
                   CommonButton(
                     text: "Login",
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/');
+                      Navigator.pushReplacementNamed(context, '/home');
                     },
                   ),
                 ],

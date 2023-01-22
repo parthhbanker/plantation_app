@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:plantation/utils/components.dart';
+import 'package:plantation/api/api.dart';
+import 'package:plantation/models/demand_model.dart';
+import 'package:plantation/utils/dbqueries.dart';
 import 'package:sizer/sizer.dart';
 
 class SyncFormPage extends StatefulWidget {
@@ -10,13 +14,28 @@ class SyncFormPage extends StatefulWidget {
 }
 
 class _SyncFormPageState extends State<SyncFormPage> {
+  Future<List<dynamic>> demandList() async {
+    return await DbQueries().fetchCustomQuery(
+      query:
+          "select f.name, f.aadhar, d.demand_id from demand d join farmer_year_reg fyr on d.reg_id = fyr.reg_id join farmer f on fyr.farmer_id = f.farmer_id",
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    dataUpdated.sink.add(1);
+  }
+
+  StreamController<int> dataUpdated = StreamController<int>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Unsynced Forms",
-          style: TextStyle(fontSize: 14.sp),
+          style: TextStyle(fontSize: 16),
         ),
         automaticallyImplyLeading: true,
       ),
@@ -24,103 +43,77 @@ class _SyncFormPageState extends State<SyncFormPage> {
         child: Container(
           width: 100.w,
           height: 100.h,
-          margin: EdgeInsets.all(10.sp),
+          margin: const EdgeInsets.all(13),
           child: Column(
             children: [
               Expanded(
-                child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: 1,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      width: 100.w,
-                      height: 8.h,
-                      margin: EdgeInsets.all(10.sp),
-                      padding: EdgeInsets.all(10.sp),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.black.withOpacity(0.1),
-                        ),
-                        borderRadius: BorderRadius.circular(10.sp),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 7.0,
-                            color: Colors.black.withOpacity(0.2),
-                            offset: Offset(1.sp, 3.sp),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 10.sp),
-                                child: Icon(
-                                  Icons.person_outline_rounded,
-                                  color: Colors.blueAccent,
-                                  size: 24.sp,
-                                ),
-                              ),
-                              Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "List Title",
-                                    style: TextStyle(fontSize: 12.sp),
-                                  ),
-                                  Text(
-                                    "Aadhar",
-                                    style: TextStyle(fontSize: 9.sp),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black.withOpacity(0.1),
-                              ),
-                              borderRadius: BorderRadius.circular(5.sp),
-                            ),
-                            padding: EdgeInsets.all(5.sp),
-                            child: InkWell(
-                              onTap: () {},
-                              child: Icon(
-                                Icons.delete_outline_rounded,
-                                size: 20.sp,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                child: StreamBuilder(
+                  stream: dataUpdated.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done ||
+                        snapshot.connectionState == ConnectionState.active) {
+                      if (snapshot.hasData) {
+                        return FutureBuilder(
+                          future: demandList(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.done ||
+                                snapshot.connectionState ==
+                                    ConnectionState.active) {
+                              if (snapshot.hasData) {
+                                List<dynamic> data = snapshot.data!;
+                                return ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index) {
+                                    return customListTile(
+                                      aadhar: data[index]['aadhar'],
+                                      demandId: data[index]['demand_id'],
+                                      farmerName: data[index]['name'],
+                                    );
+                                  },
+                                );
+                              }
+                              return const Center(
+                                child: Text("No Data Available"),
+                              );
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator.adaptive(),
+                            );
+                          },
+                        );
+                      }
+                      return const Center(
+                        child: Text("No Data Available"),
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator.adaptive(),
                     );
                   },
                 ),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  List<dynamic> l =
+                      await DbQueries().getDBData(tableName: 'demand');
+                  DemandModel obj = DemandModel.fromJson(l[0]);
+                  ApiHandler.sendDemandData(obj);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 67, 210, 72),
                   padding:
-                      EdgeInsets.symmetric(horizontal: 18.sp, vertical: 8.sp),
+                      const EdgeInsets.symmetric(horizontal: 21, vertical: 10),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.sp),
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                  fixedSize: Size(45.w, 7.h),
+                  fixedSize: const Size(150, 50),
                 ),
-                child: Text(
+                child: const Text(
                   "Sync Data",
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 16,
                     fontWeight: FontWeight.w400,
                     color: Colors.white,
                   ),
@@ -129,6 +122,87 @@ class _SyncFormPageState extends State<SyncFormPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  customListTile(
+      {required String farmerName,
+      required String aadhar,
+      required int demandId}) {
+    return Container(
+      width: 100.w,
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: Colors.black.withOpacity(0.1),
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 7.0,
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(1, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: Icon(
+                  Icons.person_outline_rounded,
+                  color: Colors.blueAccent,
+                  size: 26,
+                ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    farmerName,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    aadhar,
+                    style: const TextStyle(fontSize: 12),
+                  )
+                ],
+              )
+            ],
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black.withOpacity(0.1),
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.all(8),
+            child: InkWell(
+              onTap: () {
+                DbQueries.deleteDemand(demandId);
+                dataUpdated.sink.add(1);
+              },
+              child: const Icon(
+                Icons.delete_outline_rounded,
+                size: 20,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

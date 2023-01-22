@@ -10,7 +10,7 @@ class FruitTreePage extends StatefulWidget {
       {super.key, required this.farmerRegId, required this.forestTree});
 
   final int farmerRegId;
-  final Map<String, double> forestTree;
+  final List<Map<String, String>> forestTree;
 
   @override
   State<FruitTreePage> createState() => _FruitTreePageState();
@@ -21,7 +21,7 @@ class _FruitTreePageState extends State<FruitTreePage> {
     return await DbQueries().getDBData(tableName: 'fruit_tree');
   }
 
-  Map<String, double> fruitTree = {};
+  List<Map<String, String>> fruitTree = [{}];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,12 +42,20 @@ class _FruitTreePageState extends State<FruitTreePage> {
                     if (snapshot.connectionState == ConnectionState.active ||
                         snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.hasData) {
-                        for (var tree in snapshot.data) {
-                          return CustomQuantity(
-                            tree: tree,
-                            list: fruitTree,
-                          );
-                        }
+                        List<dynamic> data = snapshot.data;
+                        return SizedBox(
+                          height: 70.h,
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              return CustomQuantity(
+                                tree: data[index],
+                                list: fruitTree,
+                              );
+                            },
+                          ),
+                        );
                       } else {
                         return const Text("No data");
                       }

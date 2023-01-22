@@ -287,22 +287,23 @@ class _DemandPageState extends State<DemandPage> {
             List<dynamic> data = snapshot.data;
             districtValue = data[0]['district_id'];
             return CustomDropDown(
-                hint: "Select District",
-                value: districtValue,
-                data: data
-                    .map(
-                      (e) => DropdownMenuItem(
-                        value: e['district_id'],
-                        child: Text(e['district_name']),
-                      ),
-                    )
-                    .toList(),
-                func: (var value) {
-                  districtValue = int.parse(
-                    value.toString(),
-                  );
-                  districtController.sink.add(districtValue);
-                });
+              hint: "Select District",
+              value: districtValue,
+              data: data
+                  .map(
+                    (e) => DropdownMenuItem(
+                      value: e['district_id'],
+                      child: Text(e['district_name']),
+                    ),
+                  )
+                  .toList(),
+              func: (var value) {
+                districtValue = int.parse(
+                  value.toString(),
+                );
+                districtController.sink.add(districtValue);
+              },
+            );
           }
         } else {
           return const Center(
@@ -331,11 +332,11 @@ class _DemandPageState extends State<DemandPage> {
             yearValue = data[0]['reg_year'];
             return CustomDropDown(
                 hint: "Select Year",
-                // value: districtValue,
+                // value: int.parse(yearValue),
                 data: data
                     .map(
                       (e) => DropdownMenuItem(
-                        // value: e['reg_year'],
+                        value: e['reg_year'],
                         child: Text(e['reg_year']),
                       ),
                     )

@@ -19,8 +19,8 @@ class FarmerConsentPage extends StatefulWidget {
       required this.fruitTree});
 
   final int farmerRegId;
-  final Map<String, double> forestTree;
-  final Map<String, double> fruitTree;
+  final List<Map<String, String>> forestTree;
+  final List<Map<String, String>> fruitTree;
 
   @override
   State<FarmerConsentPage> createState() => _FarmerConsentPageState();
@@ -57,150 +57,163 @@ class _FarmerConsentPageState extends State<FarmerConsentPage> {
       ),
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 20.sp),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            StatefulBuilder(
-              builder: (BuildContext context, imageState) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Farmer Image",
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                    farmerImage != null
-                        ? Container(
-                            margin: EdgeInsets.symmetric(vertical: 15.sp),
-                            width: 100.w,
-                            height: 25.h,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                              borderRadius: BorderRadius.circular(20.sp),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20.sp),
-                              child: Image.file(
-                                farmerImage!,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        : Container(
-                            margin: EdgeInsets.symmetric(vertical: 15.sp),
-                            width: 100.w,
-                            height: 25.h,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                              borderRadius: BorderRadius.circular(20.sp),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "No Image Taken",
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                          ),
-                    Center(
-                      child: Container(
-                        width: 60.w,
-                        height: 5.5.h,
-                        padding: EdgeInsets.only(bottom: 5.sp),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            _getStoragePermission().whenComplete(() async {
-                              farmerImage = await pickImage();
-
-                              imageState(() {});
-                            });
-                          },
-                          child: Text(
-                            "Pick Image",
-                            style: TextStyle(fontSize: 12.sp),
-                            softWrap: true,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-            Container(
-              margin: EdgeInsets.all(10.sp),
-              child: Column(
-                children: [
-                  Text(
-                    "Farmer Sign",
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                  Signature(
-                    controller: _signatureController!,
-                    backgroundColor: const Color.fromARGB(255, 187, 165, 165),
-                    dynamicPressureSupported: true,
-                    width: 70.w,
-                    height: 20.h,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              StatefulBuilder(
+                builder: (BuildContext context, imageState) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      IconButton(
-                        onPressed: () {
-                          _signatureController!.clear();
-                        },
-                        icon: const Icon(
-                          Icons.clear_rounded,
-                        ),
+                      Column(
+                        children: [
+                          const Text(
+                            "Farmer Image",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          farmerImage != null
+                              ? Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  // width: 100.w,
+                                  height: 30.h,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.2),
+                                    ),
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(22),
+                                    child: Image.file(
+                                      farmerImage!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  height: 30.h,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.2),
+                                    ),
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Text(
+                                    "No Image Taken",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                        ],
                       ),
-                      IconButton(
-                        onPressed: () {
-                          saveSign();
-                        },
-                        icon: const Icon(
-                          Icons.check,
+                      Center(
+                        child: Container(
+                          width: 150,
+                          height: 50,
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              _getStoragePermission().whenComplete(() async {
+                                farmerImage = await pickImage();
+
+                                imageState(() {});
+                              });
+                            },
+                            child: const Text(
+                              "Pick Image",
+                              style: TextStyle(fontSize: 14),
+                              softWrap: true,
+                            ),
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                  const Divider(thickness: 2),
-                  CommonButton(
-                    text: "Next",
-                    onPressed: () {
-                      if (_signatureController!.isEmpty) {
-                        Fluttertoast.showToast(msg: "Please get farmer sign!");
-                      } else if (farmerImage == null) {
-                        Fluttertoast.showToast(msg: "Please get farmer image!");
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FinalConsentPage(
-                              farmerRegId: widget.farmerRegId,
-                              forestTree: widget.forestTree,
-                              fruitTree: widget.fruitTree,
-                              farmerSign: farmerSign!,
-                              farmerImage: farmerImage!,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ],
+                  );
+                },
               ),
-            )
-          ],
+              Container(
+                margin: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Farmer Sign",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Signature(
+                      controller: _signatureController!,
+                      backgroundColor: const Color.fromARGB(255, 187, 165, 165),
+                      dynamicPressureSupported: true,
+                      width: 400,
+                      height: 200,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            _signatureController!.clear();
+                          },
+                          icon: const Icon(
+                            Icons.clear_rounded,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            saveSign().then((value) =>
+                                Fluttertoast.showToast(msg: "Sign Saved"));
+                          },
+                          icon: const Icon(
+                            Icons.check,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(thickness: 2),
+                    CommonButton(
+                      text: "Next",
+                      onPressed: () {
+                        if (_signatureController!.isEmpty) {
+                          Fluttertoast.showToast(
+                              msg: "Please get farmer sign!");
+                        } else if (farmerImage == null) {
+                          Fluttertoast.showToast(
+                              msg: "Please get farmer image!");
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FinalConsentPage(
+                                farmerRegId: widget.farmerRegId,
+                                forestTree: widget.forestTree,
+                                fruitTree: widget.fruitTree,
+                                farmerSign: farmerSign!,
+                                farmerImage: farmerImage!,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

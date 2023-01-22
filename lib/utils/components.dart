@@ -2,19 +2,22 @@ import 'package:customizable_counter/customizable_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-customFormField({
-  required String hintText,
-  required TextEditingController controller,
-  required String label,
-  bool obscureText = false,
-  TextInputType keyboardType = TextInputType.text,
-  bool isPassword = false,
-}) {
+customFormField(
+    {required String hintText,
+    TextEditingController? controller,
+    required String label,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+    bool isPassword = false,
+    enabled = true,
+    readOnly = false}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
     child: StatefulBuilder(builder: (context, internalState) {
       return TextFormField(
         autofocus: true,
+        enabled: enabled,
+        readOnly: readOnly,
         obscureText: obscureText,
         keyboardType: TextInputType.text,
         controller: controller,
@@ -28,7 +31,9 @@ customFormField({
                     });
                   },
                   icon: Icon(
-                      !obscureText ? Icons.visibility : Icons.visibility_off))
+                    !obscureText ? Icons.visibility : Icons.visibility_off,
+                  ),
+                )
               : null,
           hintText: hintText,
           label: Text(
@@ -154,27 +159,27 @@ class CommonButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(10.sp),
+      padding: const EdgeInsets.all(15),
       child: ElevatedButton(
         onPressed: () {
           onPressed();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color.fromARGB(255, 67, 210, 72),
-          padding: EdgeInsets.symmetric(horizontal: 18.sp, vertical: 8.sp),
-          shape: RoundedRectangleBorder(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-                topRight: Radius.circular(10.sp),
-                bottomLeft: Radius.circular(10.sp),
-                bottomRight: Radius.circular(20.sp),
-                topLeft: Radius.circular(20.sp)),
+                topRight: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(20),
+                topLeft: Radius.circular(20)),
           ),
-          fixedSize: Size(45.w, 7.h),
+          fixedSize: const Size(125, 50),
         ),
         child: Text(
           text,
-          style: TextStyle(
-            fontSize: 16.sp,
+          style: const TextStyle(
+            fontSize: 18,
             fontWeight: FontWeight.normal,
           ),
         ),
@@ -245,7 +250,7 @@ class CustomQuantity extends StatelessWidget {
       : super(key: key);
 
   final dynamic tree;
-  final Map<String, double> list;
+  final List<Map<String, String>> list;
 
   @override
   Widget build(BuildContext context) {
@@ -260,11 +265,33 @@ class CustomQuantity extends StatelessWidget {
             step: 1,
             borderRadius: 20.sp,
             onCountChange: (c) {
-              c == 0
-                  ? list.remove(
-                      tree['id'].toString(),
-                    )
-                  : list[tree['id'].toString()] = c;
+              Map<String, String> d = {};
+              Map<String, String> old = {};
+              bool isRemove = false;
+              if (c == 0) {
+                for (var element in list) {
+                  if (element['id'].toString() == tree['id'].toString()) {
+                    old = element;
+                    isRemove = true;
+                  }
+                }
+              } else {
+                for (var e in list) {
+                  if (e['id'].toString() == tree['id'].toString()) {
+                    isRemove = true;
+                    old = e;
+                    d = {"id": tree['id'].toString(), "qty": c.toString()};
+                  } else {
+                    d = {"id": tree['id'].toString(), "qty": c.toString()};
+                  }
+                }
+              }
+              if (isRemove) {
+                list.remove(old);
+              }
+              if (d.isNotEmpty) {
+                list.add(d);
+              }
             },
           ),
         ],
@@ -272,4 +299,3 @@ class CustomQuantity extends StatelessWidget {
     );
   }
 }
-
