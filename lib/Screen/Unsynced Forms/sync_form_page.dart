@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:plantation/api/api.dart';
@@ -19,7 +17,7 @@ class _SyncFormPageState extends State<SyncFormPage> {
   Future<List<dynamic>> demandList() async {
     return await DbQueries().fetchCustomQuery(
       query:
-          "select f.name, f.aadhar, d.demand_id from demand d join farmer_year_reg fyr on d.reg_id = fyr.reg_id join farmer f on fyr.farmer_id = f.farmer_id",
+          "select f.name, fyr.reg_year,  f.aadhar, d.demand_id from demand d join farmer_year_reg fyr on d.reg_id = fyr.reg_id join farmer f on fyr.farmer_id = f.farmer_id",
     );
   }
 
@@ -74,10 +72,10 @@ class _SyncFormPageState extends State<SyncFormPage> {
                                     itemCount: data.length,
                                     itemBuilder: (context, index) {
                                       return customListTile(
-                                        aadhar: data[index]['aadhar'],
-                                        demandId: data[index]['demand_id'],
-                                        farmerName: data[index]['name'],
-                                      );
+                                          aadhar: data[index]['aadhar'],
+                                          demandId: data[index]['demand_id'],
+                                          farmerName: data[index]['name'],
+                                          year: data[index]['reg_year']);
                                     },
                                   );
                                 }
@@ -142,6 +140,7 @@ class _SyncFormPageState extends State<SyncFormPage> {
   customListTile(
       {required String farmerName,
       required String aadhar,
+      required String year,
       required int demandId}) {
     return Container(
       width: 100.w,
@@ -182,7 +181,7 @@ class _SyncFormPageState extends State<SyncFormPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    farmerName,
+                    "$farmerName : $year",
                     style: const TextStyle(fontSize: 14),
                   ),
                   const SizedBox(

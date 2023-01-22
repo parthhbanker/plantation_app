@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:plantation/api/const.dart';
 import 'package:plantation/models/block_model.dart';
@@ -130,7 +130,7 @@ class ApiHandler {
     var response = await request.send();
 
     if (response.statusCode == 200) {
-      print("COmpleted");
+      Fluttertoast.showToast(msg: "Data added");
     }
   }
 
@@ -146,13 +146,12 @@ class ApiHandler {
     ApiHandler._fetchFruitData();
   }
 
-  static Future<bool> postApiData(
+  static Future postApiData(
       {required String url, required Map<dynamic, dynamic> body}) async {
     final response = await http.post(Uri.parse(url), body: body);
 
     if (response.statusCode == 200) {
-      return true;
+      return jsonDecode(response.body);
     }
-    return false;
   }
 }

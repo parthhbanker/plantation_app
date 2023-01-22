@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:plantation/api/api.dart';
+import 'package:plantation/api/const.dart';
 import 'package:plantation/utils/components.dart';
+import 'package:plantation/utils/dbqueries.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -58,6 +62,11 @@ class _LoginPageState extends State<LoginPage> {
                   CommonButton(
                     text: "Login",
                     onPressed: () {
+                      setState(() {
+                        login(usernameController.text, passwordController.text);
+                      });
+                      DbQueries.createTables();
+                      ApiHandler.fetchApiData();
                       Navigator.pushReplacementNamed(context, '/home');
                     },
                   ),
@@ -67,6 +76,25 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void login(String username, String password) async {
+    var log = await ApiHandler.postApiData(
+        url: surveyorLoginUrl,
+        body: {"username": username, "password": password});
+
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+
+// Save an integer value to 'counter' key.
+    await prefs.setString(
+      'surveyor_id',
+      (log[0]['surveyor_id']).toString(),
+    );
+    await prefs.setBool(
+      'isLoggedIn',
+      true,
     );
   }
 }

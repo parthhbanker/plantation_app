@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:plantation/models/demand_model.dart';
 import 'package:plantation/utils/components.dart';
 import 'package:plantation/utils/dbqueries.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -48,14 +49,18 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
       exportPenColor: Colors.black,
     );
 
-    dateInput.text = "";
+    dateInput.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-    // widget.forestTree.forEach((key, value) {
-    //   totalForestTree += value;
-    // });
-    // widget.fruitTree.forEach((key, value) {
-    //   totalFruitTree += value;
-    // });
+    for (Map<String, String> element in widget.forestTree) {
+      if (element.values.isNotEmpty) {
+        totalForestTree += double.parse(element['qty']!);
+      }
+    }
+    for (Map<String, String> element in widget.fruitTree) {
+      if (element.values.isNotEmpty) {
+        totalFruitTree += double.parse(element['qty']!);
+      }
+    }
 
     totalTree = totalForestTree + totalFruitTree;
 
@@ -142,15 +147,16 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
                         child: TextField(
                           controller: dateInput,
                           decoration: const InputDecoration(
-                              icon: Icon(Icons.calendar_today),
-                              labelText: "Enter Date"),
+                            icon: Icon(Icons.calendar_today),
+                            labelText: "Enter Date",
+                          ),
                           readOnly: true,
                           onTap: () async {
                             DateTime? pickedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
                               firstDate: DateTime(1950),
-                              lastDate: DateTime(2100),
+                              lastDate: DateTime.now(),
                             );
 
                             if (pickedDate != null) {
@@ -216,7 +222,7 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
                     const Divider(thickness: 2),
                     CommonButton(
                       text: "Save",
-                      onPressed: () {
+                      onPressed: () async {
                         if (_signatureController!.isNotEmpty &&
                             dateInput.text.isNotEmpty) {
                           if (widget.fruitTree.contains({})) {
@@ -225,9 +231,12 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
                           if (widget.forestTree.contains({})) {
                             widget.forestTree.removeAt(0);
                           }
+
+                          int sid = await getSID();
+
                           DemandModel obj = DemandModel(
                             regId: widget.farmerRegId,
-                            surveyorId: 1,
+                            surveyorId: sid,
                             forestTree: widget.forestTree,
                             fruitTree: widget.fruitTree,
                             farmerImage: widget.farmerImage.path,
@@ -235,8 +244,8 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
                             surveyorSign: surveyorSign!.path,
                             demandDate: dateInput.text,
                           );
-                          // print(obj.toJson());
                           DbQueries.addDemandData(obj);
+                          // ignore: use_build_context_synchronously
                           Navigator.pushReplacementNamed(context, '/home');
                           Fluttertoast.showToast(
                             msg: "Data inserted Successfully",
@@ -278,6 +287,12 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
 
     Uint8List img = (await exportSignature()) as Uint8List;
     surveyorSign!.writeAsBytesSync(img);
+  }
+
+  Future<int> getSID() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return int.parse(prefs.getString("surveyor_id")!);
   }
 }
 

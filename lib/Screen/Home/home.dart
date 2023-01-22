@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plantation/utils/components.dart';
+import 'package:plantation/utils/dbqueries.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class HomePage extends StatefulWidget {
@@ -50,7 +52,10 @@ class _HomePageState extends State<HomePage> {
                 CommonButton(
                   text: "Logout",
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/');
+                    setState(() {
+                      logout();
+                    });
+                    Navigator.pushReplacementNamed(context, '/login');
                   },
                 )
               ],
@@ -59,5 +64,14 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future logout() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove("isLoggedIn");
+    await prefs.remove("surveyor_id");
+
+    DbQueries.dropTables();
   }
 }

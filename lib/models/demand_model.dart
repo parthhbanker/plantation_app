@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-
 List<DemandModel?>? districtModelFromJson(String str) =>
     json.decode(str) == null
         ? []
