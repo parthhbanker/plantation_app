@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:plantation/utils/components.dart';
 import 'package:plantation/utils/dbqueries.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,11 +72,25 @@ class _HomePageState extends State<HomePage> {
   Future logout() async {
     final prefs = await SharedPreferences.getInstance();
 
+    final directory = await getApplicationDocumentsDirectory();
+
+    final dir1 = Directory("${directory.path}/surveyor_sign");
+    final dir2 = Directory("${directory.path}/farmer_sign");
+    final dir3 = Directory("${directory.path}/farmer_image");
+
     await prefs.remove("isLoggedIn");
     await prefs.remove("surveyor_id");
 
+    if (dir1.existsSync()) {
+      dir1.deleteSync(recursive: true);
+    }
+    if (dir2.existsSync()) {
+      dir2.deleteSync(recursive: true);
+    }
+    if (dir3.existsSync()) {
+      dir3.deleteSync(recursive: true);
+    }
+
     DbQueries.dropTables();
   }
-
-
 }
