@@ -32,7 +32,7 @@ String createFruitTree() {
 }
 
 String createDemandTable() {
-  return "CREATE TABLE IF NOT EXISTS demand(demand_id INTEGER PRIMARY KEY AUTOINCREMENT, reg_id INTEGER, surveyor_id INTEGER, forest_tree TEXT, fruit_tree TEXT, farmer_img TEXT, farmer_sign TEXT, surveyor_sign TEXT, demand_date TEXT)";
+  return "CREATE TABLE IF NOT EXISTS demand(demand_id INTEGER PRIMARY KEY AUTOINCREMENT, reg_id INTEGER, surveyor_id INTEGER, forest_tree TEXT, fruit_tree TEXT, farmer_img TEXT, farmer_sign TEXT, surveyor_sign TEXT, demand_date TEXT, location TEXT)";
 }
 
 // drop table string

@@ -126,6 +126,7 @@ class ApiHandler {
     request.fields['forest_tree'] = jsonEncode(obj.forestTree).toString();
     request.fields['fruit_tree'] = jsonEncode(obj.fruitTree).toString();
     request.fields['surveyor_id'] = obj.surveyorId.toString();
+    request.fields['location'] = obj.location.toString();
 
     var response = await request.send();
 

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:plantation/api/api.dart';
 import 'package:plantation/models/demand_model.dart';
 import 'package:plantation/utils/dbqueries.dart';
@@ -102,10 +104,24 @@ class _SyncFormPageState extends State<SyncFormPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  final directory = await getApplicationDocumentsDirectory();
+
+                  final dir1 = Directory("${directory.path}/surveyor_sign");
+                  final dir2 = Directory("${directory.path}/farmer_sign");
+                  final dir3 = Directory("${directory.path}/farmer_image");
                   dataUpdated.sink.add(0);
                   sendData().then((value) {
                     DbQueries().resetDatabase();
                     ApiHandler.fetchApiData();
+                    if (dir1.existsSync()) {
+                      dir1.deleteSync(recursive: true);
+                    }
+                    if (dir2.existsSync()) {
+                      dir2.deleteSync(recursive: true);
+                    }
+                    if (dir3.existsSync()) {
+                      dir3.deleteSync(recursive: true);
+                    }
                   }).then(
                     (value) {
                       dataUpdated.sink.add(1);

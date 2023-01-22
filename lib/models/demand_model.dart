@@ -20,16 +20,18 @@ String districtModelToJson(List<DemandModel?>? data) => json.encode(
     );
 
 class DemandModel {
-  DemandModel(
-      {this.demandId,
-      required this.regId,
-      required this.surveyorId,
-      required this.forestTree,
-      required this.fruitTree,
-      required this.farmerImage,
-      required this.farmerSign,
-      required this.surveyorSign,
-      required this.demandDate});
+  DemandModel({
+    this.demandId,
+    required this.regId,
+    required this.surveyorId,
+    required this.forestTree,
+    required this.fruitTree,
+    required this.farmerImage,
+    required this.farmerSign,
+    required this.surveyorSign,
+    required this.demandDate,
+    required this.location,
+  });
 
   final int? demandId;
   final int regId;
@@ -40,6 +42,7 @@ class DemandModel {
   final String farmerSign;
   final String surveyorSign;
   final String demandDate;
+  final String location;
 
   factory DemandModel.fromJson(Map<String, dynamic> json) {
     List<dynamic> f = jsonDecode(json['forest_tree']);
@@ -68,6 +71,7 @@ class DemandModel {
       surveyorId: json['surveyor_id'],
       surveyorSign: json['surveyor_sign'],
       demandDate: json['demand_date'],
+      location: json['location'],
     );
   }
 
@@ -80,5 +84,6 @@ class DemandModel {
         'surveyor_id': surveyorId,
         'surveyor_sign': surveyorSign,
         'demand_date': demandDate,
+        'location': location,
       };
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:plantation/models/demand_model.dart';
 import 'package:plantation/utils/components.dart';
 import 'package:plantation/utils/dbqueries.dart';
@@ -225,31 +226,38 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
                       onPressed: () async {
                         if (_signatureController!.isNotEmpty &&
                             dateInput.text.isNotEmpty) {
-                          if (widget.fruitTree.contains({})) {
-                            widget.fruitTree.removeAt(0);
-                          }
-                          if (widget.forestTree.contains({})) {
-                            widget.forestTree.removeAt(0);
-                          }
+                          if (await checkLocationPermission()) {
+                            if (widget.fruitTree.contains({})) {
+                              widget.fruitTree.removeAt(0);
+                            }
+                            if (widget.forestTree.contains({})) {
+                              widget.forestTree.removeAt(0);
+                            }
 
-                          int sid = await getSID();
+                            int sid = await getSID();
+                            String loc = await getLocation();
 
-                          DemandModel obj = DemandModel(
-                            regId: widget.farmerRegId,
-                            surveyorId: sid,
-                            forestTree: widget.forestTree,
-                            fruitTree: widget.fruitTree,
-                            farmerImage: widget.farmerImage.path,
-                            farmerSign: widget.farmerSign.path,
-                            surveyorSign: surveyorSign!.path,
-                            demandDate: dateInput.text,
-                          );
-                          DbQueries.addDemandData(obj);
-                          // ignore: use_build_context_synchronously
-                          Navigator.pushReplacementNamed(context, '/home');
-                          Fluttertoast.showToast(
-                            msg: "Data inserted Successfully",
-                          );
+                            DemandModel obj = DemandModel(
+                              regId: widget.farmerRegId,
+                              surveyorId: sid,
+                              forestTree: widget.forestTree,
+                              fruitTree: widget.fruitTree,
+                              farmerImage: widget.farmerImage.path,
+                              farmerSign: widget.farmerSign.path,
+                              surveyorSign: surveyorSign!.path,
+                              demandDate: dateInput.text,
+                              location: loc,
+                            );
+                            DbQueries.addDemandData(obj);
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushReplacementNamed(context, '/home');
+                            Fluttertoast.showToast(
+                              msg: "Data inserted Successfully",
+                            );
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "Please allow location permission");
+                          }
                         } else {
                           Fluttertoast.showToast(msg: "Fill every fields");
                         }
@@ -263,6 +271,38 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
         ),
       ),
     );
+  }
+
+  checkLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        Fluttertoast.showToast(msg: 'Location permissions are denied');
+      } else if (permission == LocationPermission.deniedForever) {
+        Fluttertoast.showToast(
+            msg: "'Location permissions are permanently denied");
+      } else {
+        Fluttertoast.showToast(msg: "GPS Location service is granted");
+        return true;
+      }
+    } else {
+      Fluttertoast.showToast(msg: "GPS Location permission granted.");
+      return true;
+    }
+
+    return false;
+  }
+
+  getLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    String long = position.longitude.toString();
+    String lat = position.latitude.toString();
+
+    return "$lat, $long";
   }
 
   Future<Uint8List?> exportSignature() async {
