@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:plantation/api/api.dart';
 import 'package:plantation/models/demand_model.dart';
 import 'package:plantation/utils/dbqueries.dart';
@@ -53,36 +55,42 @@ class _SyncFormPageState extends State<SyncFormPage> {
                     if (snapshot.connectionState == ConnectionState.done ||
                         snapshot.connectionState == ConnectionState.active) {
                       if (snapshot.hasData) {
-                        return FutureBuilder(
-                          future: demandList(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                    ConnectionState.done ||
-                                snapshot.connectionState ==
-                                    ConnectionState.active) {
-                              if (snapshot.hasData) {
-                                List<dynamic> data = snapshot.data!;
-                                return ListView.builder(
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: data.length,
-                                  itemBuilder: (context, index) {
-                                    return customListTile(
-                                      aadhar: data[index]['aadhar'],
-                                      demandId: data[index]['demand_id'],
-                                      farmerName: data[index]['name'],
-                                    );
-                                  },
+                        if (snapshot.data == 0) {
+                          return const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          );
+                        } else {
+                          return FutureBuilder(
+                            future: demandList(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                      ConnectionState.done ||
+                                  snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                if (snapshot.hasData) {
+                                  List<dynamic> data = snapshot.data!;
+                                  return ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: data.length,
+                                    itemBuilder: (context, index) {
+                                      return customListTile(
+                                        aadhar: data[index]['aadhar'],
+                                        demandId: data[index]['demand_id'],
+                                        farmerName: data[index]['name'],
+                                      );
+                                    },
+                                  );
+                                }
+                                return const Center(
+                                  child: Text("No Data Available"),
                                 );
                               }
                               return const Center(
-                                child: Text("No Data Available"),
+                                child: CircularProgressIndicator.adaptive(),
                               );
-                            }
-                            return const Center(
-                              child: CircularProgressIndicator.adaptive(),
-                            );
-                          },
-                        );
+                            },
+                          );
+                        }
                       }
                       return const Center(
                         child: Text("No Data Available"),
@@ -96,10 +104,15 @@ class _SyncFormPageState extends State<SyncFormPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  List<dynamic> l =
-                      await DbQueries().getDBData(tableName: 'demand');
-                  DemandModel obj = DemandModel.fromJson(l[0]);
-                  ApiHandler.sendDemandData(obj);
+                  dataUpdated.sink.add(0);
+                  sendData().then((value) {
+                    DbQueries().resetDatabase();
+                    ApiHandler.fetchApiData();
+                  }).then(
+                    (value) {
+                      dataUpdated.sink.add(1);
+                    },
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 67, 210, 72),
@@ -205,5 +218,15 @@ class _SyncFormPageState extends State<SyncFormPage> {
         ],
       ),
     );
+  }
+
+  Future<void> sendData() async {
+    List<dynamic> l = await DbQueries().getDBData(tableName: 'demand');
+    for (var element in l) {
+      DemandModel obj = DemandModel.fromJson(element);
+      ApiHandler.sendDemandData(obj);
+    }
+
+    Fluttertoast.showToast(msg: "Data Sync Completed");
   }
 }

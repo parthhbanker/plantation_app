@@ -110,37 +110,12 @@ class ApiHandler {
       Uri.parse(addDemandUrl),
     );
 
-    File farmerImageFile = File(obj.farmerImage);
-    File farmerSignFile = File(obj.farmerSign);
-    File suveryorSignFile = File(obj.surveyorSign);
-
-    int farmerLen = await farmerImageFile.length();
-    int farmerSignLen = await farmerSignFile.length();
-    int surveyorLen = await suveryorSignFile.length();
-
-    var farmerImageStream = http.ByteStream(farmerImageFile.openRead());
-    var farmerSignStream = http.ByteStream(farmerSignFile.openRead());
-    var surveyorSignStream = http.ByteStream(suveryorSignFile.openRead());
-
-    farmerImageStream.cast();
-    farmerSignStream.cast();
-    surveyorSignStream.cast();
-
-    var farmerImageMultipart = http.MultipartFile(
-      'farmer_image',
-      farmerImageStream,
-      farmerLen,
-    );
-    var farmerSignMultipart = http.MultipartFile(
-      'farmer_sign',
-      farmerSignStream,
-      farmerSignLen,
-    );
-    var surveyorSignMultipart = http.MultipartFile(
-      'surveyor_sign',
-      surveyorSignStream,
-      surveyorLen,
-    );
+    http.MultipartFile farmerSignMultipart =
+        await http.MultipartFile.fromPath('farmer_sign', obj.farmerSign);
+    http.MultipartFile farmerImageMultipart =
+        await http.MultipartFile.fromPath('farmer_image', obj.farmerImage);
+    http.MultipartFile surveyorSignMultipart =
+        await http.MultipartFile.fromPath('surveyor_sign', obj.surveyorSign);
 
     request.files.add(farmerSignMultipart);
     request.files.add(farmerImageMultipart);

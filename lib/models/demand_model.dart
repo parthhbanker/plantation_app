@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 List<DemandModel?>? districtModelFromJson(String str) =>
     json.decode(str) == null
         ? []
@@ -41,19 +43,35 @@ class DemandModel {
   final String surveyorSign;
   final String demandDate;
 
-  factory DemandModel.fromJson(Map<String, dynamic> json) => DemandModel(
-        demandId: json['demand_id'],
-        farmerImage: json['farmer_img'],
-        farmerSign: json['farmer_sign'],
-        forestTree:
-            jsonDecode(json['forest_tree']) as List<Map<String, String>>,
-        fruitTree:
-            (jsonDecode(json['fruit_tree'])) as List<Map<String, String>>,
-        regId: json['reg_id'],
-        surveyorId: json['surveyor_id'],
-        surveyorSign: json['surveyor_sign'],
-        demandDate: json['demand_date'],
-      );
+  factory DemandModel.fromJson(Map<String, dynamic> json) {
+    List<dynamic> f = jsonDecode(json['forest_tree']);
+    List<Map<String, String>> forest = [];
+    for (var element in f) {
+      if (!element.values.isEmpty) {
+        forest.add({"id": element['id'], "qty": element['qty']});
+      }
+    }
+
+    f = jsonDecode(json['fruit_tree']);
+    List<Map<String, String>> fruit = [];
+    for (var element in f) {
+      if (!element.values.isEmpty) {
+        fruit.add({"id": element['id'], "qty": element['qty']});
+      }
+    }
+
+    return DemandModel(
+      demandId: json['demand_id'],
+      farmerImage: json['farmer_img'],
+      farmerSign: json['farmer_sign'],
+      forestTree: forest,
+      fruitTree: fruit,
+      regId: json['reg_id'],
+      surveyorId: json['surveyor_id'],
+      surveyorSign: json['surveyor_sign'],
+      demandDate: json['demand_date'],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'farmer_img': farmerImage,
