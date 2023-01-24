@@ -30,7 +30,7 @@ class VillageModel {
         villageId: json["village_id"],
         villageName: json["village_name"],
         blockId: json["block_id"],
-        status: json["status"],
+        status: json["status"].toString(),
       );
 
   Map<String, dynamic> toJson() => {

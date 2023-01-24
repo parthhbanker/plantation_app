@@ -12,7 +12,6 @@ class DatabaseHelper {
         DbQueries.initTables(db);
         return;
       },
-      
       version: 1,
     );
     return _db;

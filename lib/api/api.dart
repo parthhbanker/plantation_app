@@ -42,7 +42,13 @@ class ApiHandler {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       (data as List)
-          .map((d) => {DbQueries.addVillageData(VillageModel.fromJson(d))})
+          .map(
+            (d) => {
+              DbQueries.addVillageData(
+                VillageModel.fromJson(d),
+              ),
+            },
+          )
           .toList();
     }
     return jsonDecode(response.body);
@@ -64,7 +70,13 @@ class ApiHandler {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       (data as List)
-          .map((d) => {DbQueries.addFYRData(FarmerRegModel.fromJson(d))})
+          .map(
+            (d) => {
+              DbQueries.addFYRData(
+                FarmerRegModel.fromJson(d),
+              ),
+            },
+          )
           .toList();
     }
     return jsonDecode(response.body);

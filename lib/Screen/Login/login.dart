@@ -81,8 +81,9 @@ class _LoginPageState extends State<LoginPage> {
 
   void login(String username, String password) async {
     var log = await ApiHandler.postApiData(
-        url: surveyorLoginUrl,
-        body: {"username": username, "password": password});
+      url: surveyorLoginUrl,
+      body: {"username": username, "password": password},
+    );
 
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();

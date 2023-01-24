@@ -236,7 +236,7 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
 
                             int sid = await getSID();
                             String loc = await getLocation();
-                            
+
                             DemandModel obj = DemandModel(
                               regId: widget.farmerRegId,
                               surveyorId: sid,

@@ -102,14 +102,12 @@ class _SyncFormPageState extends State<SyncFormPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  
                   dataUpdated.sink.add(0);
                   sendData().then((value) {
                     DbQueries().resetDatabase();
-                      ApiHandler.fetchApiData();
+                    ApiHandler.fetchApiData();
                   }).then(
                     (value) {
-                      
                       dataUpdated.sink.add(1);
                     },
                   );
