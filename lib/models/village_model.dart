@@ -18,12 +18,12 @@ class VillageModel {
     required this.villageId,
     required this.villageName,
     required this.blockId,
-    required this.status,
+    this.status,
   });
 
-  final String? villageId;
-  final String? villageName;
-  final String? blockId;
+  final String villageId;
+  final String villageName;
+  final String blockId;
   final String? status;
 
   factory VillageModel.fromJson(Map<String, dynamic> json) => VillageModel(
