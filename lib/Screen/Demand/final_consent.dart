@@ -250,7 +250,11 @@ class _FinalConsentPageState extends State<FinalConsentPage> {
                             );
                             DbQueries.addDemandData(obj);
                             // ignore: use_build_context_synchronously
-                            Navigator.pushReplacementNamed(context, '/home');
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/home',
+                              (Route<dynamic> route) => false,
+                            );
                             Fluttertoast.showToast(
                               msg: "Data inserted Successfully",
                             );

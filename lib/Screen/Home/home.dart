@@ -55,10 +55,19 @@ class _HomePageState extends State<HomePage> {
                 CommonButton(
                   text: "Logout",
                   onPressed: () {
-                    setState(() {
-                      logout();
-                    });
-                    Navigator.pushReplacementNamed(context, '/login');
+                    setState(
+                      () {
+                        logout().then(
+                          (value) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/login',
+                              (Route<dynamic> route) => false,
+                            );
+                          },
+                        );
+                      },
+                    );
                   },
                 )
               ],

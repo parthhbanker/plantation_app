@@ -67,7 +67,11 @@ class _LoginPageState extends State<LoginPage> {
                       });
                       DbQueries.createTables();
                       ApiHandler.fetchApiData();
-                      Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/home',
+                        (Route<dynamic> route) => false,
+                      );
                     },
                   ),
                 ],
